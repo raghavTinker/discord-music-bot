@@ -82,10 +82,12 @@ async def join(ctx):
 
 @bot.command(name="leave")  
 async def leave(ctx):
+    global queue
     voice_client = ctx.message.guild.voice_client
     if(ctx.voice_client):
         await ctx.guild.voice_client.disconnect()
         await ctx.send("Bot left!")
+        queue = []
     else:
         await ctx.send("I am not in the VC")
 
@@ -147,15 +149,13 @@ async def resume(ctx):
         await ctx.send("I am not playing anything")
 
 @bot.command(name="skip")
-async def resume(ctx):
+async def skip(ctx):
     #skip the track
     print("skip")
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_playing():
         voice_client.stop()
-
-    else:
-        await ctx.send("Queue is empty")
+    queuePlayer(voice_client)
 
 @bot.command(name="queue")
 async def queue(ctx):
@@ -165,6 +165,16 @@ async def queue(ctx):
         message = message + player.title + "\n"
     await ctx.send(message)
 
+@bot.command(name="stop")
+async def stop(ctx):
+    global queue
+    queue = []
+
+    voice_client = ctx.message.guild.voice_client
+    if voice_client.is_playing():
+        voice_client.stop()
+    await ctx.send("Stopped, queue removed")
+
 
 #Token input
 try:
@@ -172,4 +182,4 @@ try:
     token = str(os.environ['TOKEN'])
     bot.run(token)
 except:
-    print("Invallid token")
+    print("Invalid token")
