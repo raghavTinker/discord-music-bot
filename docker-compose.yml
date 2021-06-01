@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  discordmusicbot:
+    image: discordmusicbot
+    container_name: SaregamaBot
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      - TOKEN=PUT_YOUR_TOKEN
+      - PREFIX=YOUR_PREFIX

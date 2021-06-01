@@ -107,7 +107,8 @@ async def play(ctx, url):
             else:  
                 queue.append(player)
                 await ctx.send("added queue {}".format(player.title))
-    except:
+    except Exception as error:
+        print(error)
         await ctx.send("Somenthing went wrong - please try again later!")
 
 def start_playing(voice_client):
