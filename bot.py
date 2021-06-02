@@ -187,9 +187,9 @@ async def stop(ctx):
     await ctx.send("Stopped, queue removed")
 
 #Now playing
-@bot.command(name="np")
-async def np(ctx):
-    await ctx.send("Playing {}".format(server_queue[ctx.guild.id][0].title))
+#@bot.command(name="np")
+#async def np(ctx):
+    #await ctx.send("Playing {}".format(server_queue[ctx.guild.id][0].title))
 
 #Token input
 try:
