@@ -33,6 +33,8 @@ e) ```&queue``` => Shows the music queue list<br>
 f) ```&skip``` => Skips the music to the next song<br>
 g) ```&stop``` => Stops music and clears queue<br>
 
+## Container Usage
+https://hub.docker.com/repository/docker/raghavtinker/discordmusicbot<br>
 ### Limitations:
 a) It can only play stuff from youtube<br>
 b)Youtube playlists dont work yet<br>
