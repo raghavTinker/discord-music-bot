@@ -155,7 +155,6 @@ async def skip(ctx):
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_playing():
         voice_client.stop()
-    queuePlayer(voice_client)
 
 @bot.command(name="queue")
 async def queue(ctx):
