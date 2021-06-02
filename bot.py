@@ -186,7 +186,7 @@ async def stop(ctx):
         voice_client.stop()
     await ctx.send("Stopped, queue removed")
 
-Now playing
+#Now playing
 @bot.command(name="np")
 async def np(ctx):
     await ctx.send("Playing {}".format(server_queue[ctx.guild.id][0].title))
