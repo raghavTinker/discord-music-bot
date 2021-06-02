@@ -25,10 +25,15 @@ Default character is: ```&```
 
 ## Bot commands:
 
-```&join``` => Telling the bot to join the VC (important for playing music)<br>
-```&play <Youtube URL>``` => Plays the audio from youtube url<br>
-```&pause``` => Pausing the song<br>
-```&resume``` => Resume music<br>
-```&queue``` => Shows the music queue list<br>
-```&skip``` => Skips the music to the next song<br>
-```&stop``` => Stops music and clears queue<br>
+a) ```&join``` => Telling the bot to join the VC (important for playing music)<br>
+b) ```&play <Youtube URL>``` => Plays the audio from youtube url<br>
+c) ```&pause``` => Pausing the song<br>
+d) ```&resume``` => Resume music<br>
+e) ```&queue``` => Shows the music queue list<br>
+f) ```&skip``` => Skips the music to the next song<br>
+g) ```&stop``` => Stops music and clears queue<br>
+
+### Limitations:
+a) It can only play stuff from youtube<br>
+b)Youtube playlists dont work yet<br>
+c)Everything else it 'should' play
