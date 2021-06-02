@@ -6,7 +6,8 @@ import youtube_dl
 
 
 token = ""
-queue = []
+server_queue = dict()
+
 
 #Prefix input
 prefix = ""
@@ -67,6 +68,8 @@ class Music(commands.Cog):
         self.bot = bot
 
 #Discord stuff
+
+#joining the channel
 @bot.command(name="join")
 async def join(ctx):
     global queue
@@ -75,11 +78,11 @@ async def join(ctx):
         return
     else:
         channel = ctx.message.author.voice.channel
-        queue = []
         await ctx.send(f'Connected to ``{channel}``')
-
+        await ctx.send(type(ctx.guild.id))
     await channel.connect()
 
+#Leaving VC
 @bot.command(name="leave")  
 async def leave(ctx):
     global queue
@@ -87,48 +90,57 @@ async def leave(ctx):
     if(ctx.voice_client):
         await ctx.guild.voice_client.disconnect()
         await ctx.send("Bot left!")
-        queue = []
+        queue[ctx.guild.id] = []
     else:
         await ctx.send("I am not in the VC")
 
+#Play command
 @bot.command(name="play") 
 async def play(ctx, url):
-    global queue
-    print(len(queue))
-
+    print(type(server_queue))
+    voice_client = ctx.voice_client
     try:
         async with ctx.typing():
             player = await YTDLSource.from_url(url, loop=bot.loop, stream=True)
-
-            if len(queue) == 0:
-                queue.append(player)
-                print(queue)
-                start_playing(ctx.voice_client)
+            
+            if ctx.guild.id in server_queue:
+                #already using the bot
+                if(len(server_queue[ctx.guild.id]) == 0):
+                    server_queue[ctx.guild.id].append(player)
+                    await ctx.send("Playing {}".format(player.title))
+                    start_playing(ctx.guild.id, voice_client)
+                else:
+                    server_queue[ctx.guild.id].append(player)
+                    await ctx.send("Added to queue {}".format(player.title))
+            else:
+                server_queue[ctx.guild.id] = [player]
                 await ctx.send("Playing {}".format(player.title))
-
-            else:  
-                queue.append(player)
-                await ctx.send("added queue {}".format(player.title))
+                start_playing(ctx.guild.id, voice_client)
     except Exception as error:
         print(error)
-        await ctx.send("Somenthing went wrong - please try again later!")
-
-def start_playing(voice_client):
-    if(len(queue) != 0):
-        player = queue[0]
+        await ctx.send("Something went wrong, try again later")
+                
+#Playing music
+def start_playing(server_id, voice_client):
+    if(len(server_queue[server_id]) != 0):
+        player = server_queue[server_id][0]
         try:
-            voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else queuePlayer(voice_client))
+            voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else queuePlayer(server_id, voice_client))
         except:
             print("unkown error!")
         #Removing stuff from the list
     else:
         print("queue over")
 
-def queuePlayer(voice_client):
-    global queue
-    queue.pop(0)
-    start_playing(voice_client)
+#Queue management
+def queuePlayer(server_id, voice_client):
+    if server_id in server_queue:
+        server_queue[server_id].pop(0)
+    else:
+        print("empty")
+    start_playing(server_id, voice_client)
 
+#Pause
 @bot.command(name="pause")
 async def pause(ctx):
     voice_client = ctx.message.guild.voice_client
@@ -138,16 +150,17 @@ async def pause(ctx):
     else:
         await ctx.send("I am not playing anything")
 
+#Resume
 @bot.command(name="resume")
 async def resume(ctx):
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_paused():
         await ctx.send("Resuming...")
         await voice_client.resume()
-        queuePlayer(ctx.voice_client)
     else:
         await ctx.send("I am not playing anything")
 
+#Skip
 @bot.command(name="skip")
 async def skip(ctx):
     #skip the track
@@ -156,28 +169,28 @@ async def skip(ctx):
     if voice_client.is_playing():
         voice_client.stop()
 
+#Queue
 @bot.command(name="queue")
 async def queue(ctx):
-    global queue
     message = ""
-    for player in queue:
+    for player in server_queue[ctx.guild.id]:
         message = message + player.title + "\n"
     await ctx.send(message)
 
+#Stop music
 @bot.command(name="stop")
 async def stop(ctx):
-    global queue
-    queue = []
-
-    voice_client = ctx.message.guild.voice_client
+    server_queue = {}
+    voice_client = ctx.voice_client
     if voice_client.is_playing():
         voice_client.stop()
     await ctx.send("Stopped, queue removed")
 
+#Now playing
 @bot.command(name="np")
 async def np(ctx):
-    global queue
-    await ctx.send("Playing {}".format(queue[0].title))
+    await ctx.send("Playing {}".format(server_queue[ctx.guild.id][0].title))
+
 #Token input
 try:
     print(os.environ['TOKEN'])
