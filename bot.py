@@ -79,7 +79,6 @@ async def join(ctx):
     else:
         channel = ctx.message.author.voice.channel
         await ctx.send(f'Connected to ``{channel}``')
-        await ctx.send(type(ctx.guild.id))
     await channel.connect()
 
 #Leaving VC
