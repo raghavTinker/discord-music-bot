@@ -84,12 +84,11 @@ async def join(ctx):
 #Leaving VC
 @bot.command(name="leave")  
 async def leave(ctx):
-    global queue
     voice_client = ctx.message.guild.voice_client
     if(ctx.voice_client):
         await ctx.guild.voice_client.disconnect()
         await ctx.send("Bot left!")
-        queue[ctx.guild.id] = []
+        server_queue[ctx.guild.id] = []
     else:
         await ctx.send("I am not in the VC")
 
