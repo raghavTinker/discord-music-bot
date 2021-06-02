@@ -15,7 +15,7 @@ try:
     prefix = str(os.environ['PREFIX'])
 except:
     prefix = '&'
-bot = commands.Bot(command_prefix = '!')
+bot = commands.Bot(command_prefix = prefix)
 
 
 #Youtube stuff. Thanks to stackoverflow
