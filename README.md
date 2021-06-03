@@ -12,6 +12,8 @@ Using Snap<br>
 ```$sudo snap install ffmpeg```<br>
 
 c)Create a bot/app in the discord developer platform<br>
+d)Create a Youtube V3 API token and note it down
+e)Add the youtube API tokeb variable: ```$export API_TOKEN=YOUR_Youtube_API_TOKEN```<br>
 d)Note your discord bot TOKEN<br>
 e)Add the TOKEN variable: ```$export TOKEN=YOUR_TOKEN```<br>
 f)Use the OAuth2 link and add the bot to your desired discord bot<br>
