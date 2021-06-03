@@ -3,7 +3,7 @@ from discord.ext import commands,tasks
 import os
 import asyncio
 import youtube_dl
-
+from youtubePlaylist import *
 
 token = ""
 server_queue = dict()
@@ -15,7 +15,7 @@ try:
     print(os.environ['PREFIX'])
     prefix = str(os.environ['PREFIX'])
 except:
-    prefix = '&'
+    prefix = '!'
 bot = commands.Bot(command_prefix = prefix)
 
 
@@ -92,28 +92,41 @@ async def leave(ctx):
     else:
         await ctx.send("I am not in the VC")
 
+async def getQueuePopulated(server_id, urls):
+    for url in urls:
+        if(server_id in server_queue):
+            server_queue[server_id].append(await YTDLSource.from_url(url, loop=bot.loop, stream=True))
+        else:
+            server_queue[server_id] = [await YTDLSource.from_url(url, loop=bot.loop, stream=True)]
+
 #Play command
 @bot.command(name="play") 
 async def play(ctx, url):
     print(type(server_queue))
     voice_client = ctx.voice_client
     try:
-        async with ctx.typing():
-            player = await YTDLSource.from_url(url, loop=bot.loop, stream=True)
+        if "playlist" in url:
+            urls_in_playlist = getURL(url)
+            number_of_songs = await getQueuePopulated(ctx.guild.id, urls_in_playlist)
+            await ctx.send("Added {} songs".format(len(urls_in_playlist)))
+            start_playing(ctx.guild.id, voice_client)
+        else:
+            async with ctx.typing():
+                player = await YTDLSource.from_url(url, loop=bot.loop, stream=True)
             
-            if ctx.guild.id in server_queue:
-                #already using the bot
-                if(len(server_queue[ctx.guild.id]) == 0):
-                    server_queue[ctx.guild.id].append(player)
+                if ctx.guild.id in server_queue:
+                    #already using the bot
+                    if(len(server_queue[ctx.guild.id]) == 0):
+                        server_queue[ctx.guild.id].append(player)
+                        await ctx.send("Playing {}".format(player.title))
+                        start_playing(ctx.guild.id, voice_client)
+                    else:
+                        server_queue[ctx.guild.id].append(player)
+                        await ctx.send("Added to queue {}".format(player.title))
+                else:
+                    server_queue[ctx.guild.id] = [player]
                     await ctx.send("Playing {}".format(player.title))
                     start_playing(ctx.guild.id, voice_client)
-                else:
-                    server_queue[ctx.guild.id].append(player)
-                    await ctx.send("Added to queue {}".format(player.title))
-            else:
-                server_queue[ctx.guild.id] = [player]
-                await ctx.send("Playing {}".format(player.title))
-                start_playing(ctx.guild.id, voice_client)
     except Exception as error:
         print(error)
         await ctx.send("Something went wrong, try again later")
