@@ -1,8 +1,15 @@
 from apiclient.discovery import build
+import os
+import sys
 
-
-
-DEVELOPER_KEY = "AIzaSyCN1XU8VESx4Ex8tN3S6cxuFqFSRvb_ZuM"
+DEVELOPER_KEY = ""
+try:
+    print(os.environ['API_TOKEN'])
+    prefix = str(os.environ['API_TOKEN'])
+except:
+    DEVELOPER_KEY = ""
+    print("Invalid token")
+    sys.exit()
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
