@@ -15,7 +15,7 @@ try:
     print(os.environ['PREFIX'])
     prefix = str(os.environ['PREFIX'])
 except:
-    prefix = '!'
+    prefix = '&'
 bot = commands.Bot(command_prefix = prefix)
 
 
