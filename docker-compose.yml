@@ -10,3 +10,4 @@ services:
     environment:
       - TOKEN=PUT_YOUR_TOKEN
       - PREFIX=YOUR_PREFIX
+      - API_TOKEN=GOOGLE_YOUTUBE_V3_API_TOKEN
