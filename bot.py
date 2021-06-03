@@ -184,14 +184,19 @@ async def skip(ctx):
 @bot.command(name="queue")
 async def queue(ctx):
     message = ""
+    count = 0
     for player in server_queue[ctx.guild.id]:
-        message = message + player.title + "\n"
-    await ctx.send(message)
+        if (count < 7):
+            message = message + player.title + "\n"
+            count = count + 1
+        else:
+            break
+    await ctx.send("{}".format(message))
 
 #Stop music
 @bot.command(name="stop")
 async def stop(ctx):
-    server_queue = {}
+    server_queue[ctx.guild.id] = []
     voice_client = ctx.voice_client
     if voice_client.is_playing():
         voice_client.stop()
