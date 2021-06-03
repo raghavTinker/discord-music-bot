@@ -39,5 +39,3 @@ g) ```&stop``` => Stops music and clears queue<br>
 https://hub.docker.com/repository/docker/raghavtinker/discordmusicbot<br>
 ### Limitations:
 a) It can only play stuff from youtube<br>
-b)Youtube playlists dont work yet<br>
-c)Everything else it 'should' play
