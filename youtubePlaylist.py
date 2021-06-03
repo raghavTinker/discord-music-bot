@@ -5,7 +5,7 @@ import sys
 DEVELOPER_KEY = ""
 try:
     print(os.environ['API_TOKEN'])
-    prefix = str(os.environ['API_TOKEN'])
+    DEVELOPER_KEY = str(os.environ['API_TOKEN'])
 except:
     DEVELOPER_KEY = ""
     print("Invalid token")
