@@ -36,9 +36,7 @@ ytdl_format_options = {
     'source_address': '0.0.0.0'
 }
 
-ffmpeg_options = {
-    'options': '-vn'
-}
+ffmpeg_options = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5'}
 
 ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
 
@@ -72,7 +70,6 @@ class Music(commands.Cog):
 #joining the channel
 @bot.command(name="join")
 async def join(ctx):
-    global queue
     if not ctx.message.author.voice:
         await ctx.send("You are not connected to a voice channel!")
         return
@@ -102,6 +99,19 @@ async def getQueuePopulated(server_id, urls):
 #Play command
 @bot.command(name="play") 
 async def play(ctx, url):
+    vc = ctx.voice_client
+
+    if not vc:
+        if not ctx.message.author.voice:
+            embed = discord.Embed(title="", descritpion="You are not connected the Voice channel", color=discord.Color.red())
+            await ctx.send(embed)
+            return
+        else:
+            channel = ctx.message.author.voice.channel
+            embed = discord.Embed(title="", descritpion="Connected to ``{channel}``", color=discord.Color.red())
+            await ctx.send(embed)
+    
+    await channel.connect()
     print(type(server_queue))
     voice_client = ctx.voice_client
     try:
