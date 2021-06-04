@@ -4,6 +4,7 @@ import os
 import asyncio
 import youtube_dl
 from youtubePlaylist import *
+from youtubesearchpython import VideosSearch
 
 token = ""
 server_queue = dict()
@@ -98,9 +99,13 @@ async def getQueuePopulated(server_id, urls):
 
 #Play command
 @bot.command(name="play") 
-async def play(ctx, url):
+async def play(ctx, *url_link):
     vc = ctx.voice_client
 
+    url = ""
+    for word in url_link:
+        url = url + word + " "
+    print(type(url_link))
     if not vc:
         if not ctx.message.author.voice:
             embed = discord.Embed(title="", descritpion="You are not connected the Voice channel", color=discord.Color.red())
@@ -111,15 +116,45 @@ async def play(ctx, url):
             embed = discord.Embed(title="", descritpion="Connected to ``{channel}``", color=discord.Color.red())
             await ctx.send(embed)
     
-    await channel.connect()
+            await channel.connect()
     print(type(server_queue))
     voice_client = ctx.voice_client
     try:
-        if "playlist" in url:
+        if ".com" or "www" or "http" or "playlist" not in url:
+            #this is  not a legit url
+            print(url)
+            vid = VideosSearch(url, limit=2)
+            id = vid.result()["result"][0]["id"]
+            yt_url = "https://www.youtube.com/watch?v=" + str(id)
+            print(yt_url)
+
+            #player generation
+            player = await YTDLSource.from_url(yt_url, loop=bot.loop, stream=True)
+            
+            #General stuff queueing etc.......
+            if ctx.guild.id in server_queue:
+                #already using the bot
+                if(len(server_queue[ctx.guild.id]) == 0):
+                    server_queue[ctx.guild.id].append(player)
+                    await ctx.send("Playing {}".format(player.title))
+                    start_playing(ctx.guild.id, voice_client)
+                else:
+                    server_queue[ctx.guild.id].append(player)
+                    await ctx.send("Added to queue {}".format(player.title))
+            else:
+                server_queue[ctx.guild.id] = [player]
+                await ctx.send("Playing {}".format(player.title))
+                start_playing(ctx.guild.id, voice_client)
+
+
+        #Playlist
+        elif "playlist" in url:
             urls_in_playlist = getURL(url)
             number_of_songs = await getQueuePopulated(ctx.guild.id, urls_in_playlist)
             await ctx.send("Added {} songs".format(len(urls_in_playlist)))
             start_playing(ctx.guild.id, voice_client)
+        
+        #Normal url provided
         else:
             async with ctx.typing():
                 player = await YTDLSource.from_url(url, loop=bot.loop, stream=True)
