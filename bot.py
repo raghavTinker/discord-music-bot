@@ -96,6 +96,7 @@ async def getQueuePopulated(server_id, urls):
             server_queue[server_id].append(await YTDLSource.from_url(url, loop=bot.loop, stream=True))
         else:
             server_queue[server_id] = [await YTDLSource.from_url(url, loop=bot.loop, stream=True)]
+    return len(urls)
 
 #Play command
 @bot.command(name="play") 
@@ -108,19 +109,17 @@ async def play(ctx, *url_link):
     print(type(url_link))
     if not vc:
         if not ctx.message.author.voice:
-            embed = discord.Embed(title="", descritpion="You are not connected the Voice channel", color=discord.Color.red())
-            await ctx.send(embed)
-            return
+            embed = discord.Embed(title="", description="You are not connected the Voice channel", color=discord.Color.red())
+            await ctx.send(embed=embed)
         else:
             channel = ctx.message.author.voice.channel
-            embed = discord.Embed(title="", descritpion="Connected to ``{channel}``", color=discord.Color.red())
-            await ctx.send(embed)
-    
+            embed = discord.Embed(title="", description="Connected to ``{}``".format(channel), color=discord.Color.red())
+            await ctx.send(embed=embed) 
             await channel.connect()
     print(type(server_queue))
     voice_client = ctx.voice_client
     try:
-        if ".com" or "www" or "http" or "playlist" not in url:
+        if (".com" or "www" or "https" or "playlist") not in url:
             #this is  not a legit url
             print(url)
             vid = VideosSearch(url, limit=2)
@@ -136,41 +135,53 @@ async def play(ctx, *url_link):
                 #already using the bot
                 if(len(server_queue[ctx.guild.id]) == 0):
                     server_queue[ctx.guild.id].append(player)
-                    await ctx.send("Playing {}".format(player.title))
+                    server_queue[ctx.guild.id] = [player]
+                    embed = discord.Embed(title="Now playing", description="{}".format(player.title), color=discord.Color.red())
                     start_playing(ctx.guild.id, voice_client)
                 else:
                     server_queue[ctx.guild.id].append(player)
-                    await ctx.send("Added to queue {}".format(player.title))
+                    embed = discord.Embed(title="Added to queue", description="{}".format(player.title), color=discord.Color.red())
+                    await ctx.send(embed=embed)
             else:
                 server_queue[ctx.guild.id] = [player]
-                await ctx.send("Playing {}".format(player.title))
+                embed = discord.Embed(title="Now playing", description="{}".format(player.title), color=discord.Color.red())
+                await ctx.send(embed=embed)
                 start_playing(ctx.guild.id, voice_client)
 
 
         #Playlist
         elif "playlist" in url:
-            urls_in_playlist = getURL(url)
+            urls_in_playlist = getURL(url_link[0])
             number_of_songs = await getQueuePopulated(ctx.guild.id, urls_in_playlist)
-            await ctx.send("Added {} songs".format(len(urls_in_playlist)))
+            print(number_of_songs)
+            embed = discord.Embed(title="Added songs", description="Queued {} songs".format(number_of_songs), color=discord.Color.red())
+            await ctx.send(embed=embed)
             start_playing(ctx.guild.id, voice_client)
         
         #Normal url provided
         else:
             async with ctx.typing():
-                player = await YTDLSource.from_url(url, loop=bot.loop, stream=True)
+                player = await YTDLSource.from_url(url_link[0], loop=bot.loop, stream=True)
             
                 if ctx.guild.id in server_queue:
                     #already using the bot
                     if(len(server_queue[ctx.guild.id]) == 0):
                         server_queue[ctx.guild.id].append(player)
+
+                        embed = discord.Embed(title="Now Playing", description="{}".format(player.title), color=discord.Color.red())
+                        await ctx.send(embed=embed)
                         await ctx.send("Playing {}".format(player.title))
                         start_playing(ctx.guild.id, voice_client)
                     else:
                         server_queue[ctx.guild.id].append(player)
-                        await ctx.send("Added to queue {}".format(player.title))
+
+                        embed = discord.Embed(title="Added to queue", description="{}".format(player.title), color=discord.Color.red())
+                        await ctx.send(embed=embed)
                 else:
                     server_queue[ctx.guild.id] = [player]
-                    await ctx.send("Playing {}".format(player.title))
+                    embed = discord.Embed(title="Now Playing", description="{}".format(player.title), color=discord.Color.red())
+                    await ctx.send(embed=embed)
+
                     start_playing(ctx.guild.id, voice_client)
     except Exception as error:
         print(error)
@@ -179,6 +190,7 @@ async def play(ctx, *url_link):
 #Playing music
 def start_playing(server_id, voice_client):
     if(len(server_queue[server_id]) != 0):
+        print("I came here")
         player = server_queue[server_id][0]
         try:
             voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else queuePlayer(server_id, voice_client))
@@ -203,6 +215,7 @@ async def pause(ctx):
 
     if voice_client.is_playing():
         await voice_client.pause()
+        await ctx.send("Paused")
     else:
         await ctx.send("I am not playing anything")
 
@@ -232,11 +245,13 @@ async def queue(ctx):
     count = 0
     for player in server_queue[ctx.guild.id]:
         if (count < 7):
-            message = message + player.title + "\n"
+            message = message + str(count+1) + ". " + player.title + "\n"
             count = count + 1
         else:
             break
-    await ctx.send("{}".format(message))
+    embed = discord.Embed(title="Queue", description="{}".format(message), color=discord.Color.red())
+    await ctx.send(embed=embed)
+    print(server_queue[ctx.guild.id][0].url)
 
 #Stop music
 @bot.command(name="stop")
@@ -246,11 +261,13 @@ async def stop(ctx):
     if voice_client.is_playing():
         voice_client.stop()
     await ctx.send("Stopped, queue removed")
+    
 
 #Now playing
 @bot.command(name="np")
 async def np(ctx):
-    await ctx.send("Playing {}".format(server_queue[ctx.guild.id][0].title))
+    embed = discord.Embed(title="Now Playing", description="{}".format(server_queue[ctx.guild.id][0].title), color=discord.Color.red())
+    await ctx.send(embed=embed)
 
 #Token input
 try:
