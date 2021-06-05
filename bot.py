@@ -137,6 +137,7 @@ async def play(ctx, *url_link):
                     server_queue[ctx.guild.id].append(player)
                     server_queue[ctx.guild.id] = [player]
                     embed = discord.Embed(title="Now playing", description="{}".format(player.title), color=discord.Color.red())
+                    await ctx.send(embed=embed)
                     start_playing(ctx.guild.id, voice_client)
                 else:
                     server_queue[ctx.guild.id].append(player)
