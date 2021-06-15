@@ -5,6 +5,7 @@ import asyncio
 import youtube_dl
 from youtubePlaylist import *
 from youtubesearchpython import VideosSearch
+from spotifyPlaylist import *
 
 token = ""
 server_queue = dict()
@@ -16,7 +17,7 @@ try:
     print(os.environ['PREFIX'])
     prefix = str(os.environ['PREFIX'])
 except:
-    prefix = '&'
+    prefix = '!'
 bot = commands.Bot(command_prefix = prefix)
 
 
@@ -151,7 +152,7 @@ async def play(ctx, *url_link):
 
 
         #Playlist
-        elif "playlist" in url:
+        elif ("playlist" in url and "spotify" not in url):
             urls_in_playlist = getURL(url_link[0])
             number_of_songs = await getQueuePopulated(ctx.guild.id, urls_in_playlist)
             print(number_of_songs)
@@ -159,6 +160,33 @@ async def play(ctx, *url_link):
             await ctx.send(embed=embed)
             start_playing(ctx.guild.id, voice_client)
         
+        elif ("spotify" and "playlist" in url):
+            print("here")
+            if ctx.guild.id not in server_queue:
+                server_queue[ctx.guild.id] = []
+
+            songs = getSpotifySongs(url)
+            embed = discord.Embed(title="Added to queue", description="{} songs added".format(len(songs)), color=discord.Color.red())
+            await ctx.send(embed=embed)
+            
+            for song in songs:
+                vid = VideosSearch(song, limit=2)
+                id = vid.result()["result"][0]["id"]
+                yt_url = "https://www.youtube.com/watch?v=" + str(id)
+                print(yt_url)
+                player = await YTDLSource.from_url(yt_url, loop=bot.loop, stream=True)
+                
+                if(len(server_queue[ctx.guild.id]) == 0):
+                    embed = discord.Embed(title="Now playing", description="{}".format(player.title), color=discord.Color.red())
+                    await ctx.send(embed=embed)
+                    start_playing(ctx.guild.id, ctx.voice_client)
+                    server_queue[ctx.guild.id] = [player]
+                else:
+                    server_queue[ctx.guild.id].append(player)
+            start_playing(ctx.guild.id, ctx.voice_client)
+
+        #elif("spotify" and "track" in url):  to be added
+
         #Normal url provided
         else:
             async with ctx.typing():
