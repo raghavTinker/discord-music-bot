@@ -38,4 +38,8 @@ g) ```&stop``` => Stops music and clears queue<br>
 ## Container Usage
 https://hub.docker.com/repository/docker/raghavtinker/discordmusicbot<br>
 ### Limitations:
-a) It can only play stuff from youtube<br>
+a) It can't play single tracks from spotify<br>
+b)Can play playlists from spotify and youtube
+c)Can play single tracks from youtube urls
+d)You can also simply put the song name to play it via youtube
+e)Do note: Playlists in Spotify arent streamed from it. Rather they are used to create a youtube playlist which is streamed
