@@ -19,6 +19,8 @@ e)Add the TOKEN variable: ```$export TOKEN=YOUR_TOKEN```<br>
 f)Use the OAuth2 link and add the bot to your desired discord bot<br>
 g)You can change the docker bot prefix: ```$export PREFIX=PREFIX_CHARACTER```<br>
 Example: ```$export PREFIX=!```<br>
+h)For spotify you will have to use the developer platform. Create an app and note the ID and secret<br>
+j)Export variables: ```&export SPOTIFY_ID=<YOUR_SPOTIFY_DEV_ID>``` and ```$export SPOTIFY_SECRET=<SPOTIFY_DEV_SECRET>```<br>
 
 Default character is: ```&```
 
