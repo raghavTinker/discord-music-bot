@@ -320,12 +320,16 @@ async def np(ctx):
 @bot.command(name="shuffle")
 async def shuffle(ctx):
     server = ctx.guild.id
-    players = server_queue[server][1:]
-    random.shuffle(players)
-    server_queue[server][1:] = players
+    if(len(server_queue[server]) > 1):
+        players = server_queue[server][1:]
+        random.shuffle(players)
+        server_queue[server][1:] = players
 
-    embed = discord.Embed(title="Shuffled", description="Shuffled {} songs".format(len(players)), color=discord.Color.red())
-    await ctx.send(embed=embed)
+        embed = discord.Embed(title="Shuffled", description="Shuffled {} songs".format(len(players)), color=discord.Color.red())
+        await ctx.send(embed=embed)
+    else:
+        embed = discord.Embed(title="Shuffle error", description="Add more songs", color=discord.Color.red())
+        await ctx.send(embed=embed)
 
 
 #Token input
