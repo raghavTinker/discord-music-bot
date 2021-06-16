@@ -201,7 +201,7 @@ async def play(ctx, *url_link):
                     start_playing(ctx.guild.id, voice_client)
                 else:
                     server_queue[ctx.guild.id].append(player)
-
+            start_playing(ctx.guild.id, voice_client)
         #Normal url provided
         else:
             async with ctx.typing():
