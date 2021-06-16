@@ -17,7 +17,7 @@ try:
     print(os.environ['PREFIX'])
     prefix = str(os.environ['PREFIX'])
 except:
-    prefix = '!'
+    prefix = '&'
 bot = commands.Bot(command_prefix = prefix)
 
 
@@ -185,7 +185,22 @@ async def play(ctx, *url_link):
                     server_queue[ctx.guild.id].append(player)
             start_playing(ctx.guild.id, ctx.voice_client)
 
-        #elif("spotify" and "track" in url):  to be added
+        elif("spotify" and "track" in url):
+            song = getSpotifySong(url)
+            vid = VideosSearch(song, limit=2)
+            id = vid.result()["result"][0]["id"]
+            yt_url = "https://www.youtube.com/watch?v=" + str(id)
+            print(yt_url)
+            player = await YTDLSource.from_url(yt_url, loop=bot.loop, stream=True)
+            if(ctx.guild.id not in server_queue):
+                server_queue[ctx.guild.id] = [player]
+                start_playing(ctx.guild.id, voice_client)
+            else:
+                if(len(server_queue[ctx.guild.id]) == 0):
+                    server_queue[ctx.guild.id].append(player)
+                    start_playing(ctx.guild.id, voice_client)
+                else:
+                    server_queue[ctx.guild.id].append(player)
 
         #Normal url provided
         else:
