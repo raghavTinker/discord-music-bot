@@ -196,8 +196,12 @@ async def play(ctx, *url_link):
             player = await YTDLSource.from_url(yt_url, loop=bot.loop, stream=True)
             if(ctx.guild.id not in server_queue):
                 server_queue[ctx.guild.id] = [player]
+                embed = discord.Embed(title="Now playing", description="{}".format(player.title), color=discord.Color.red())
+                await ctx.send(embed=embed)
                 start_playing(ctx.guild.id, voice_client)
             else:
+                embed = discord.Embed(title="Added to queue", description="{}".format(player.title), color=discord.Color.red())
+                await ctx.send(embed=embed)
                 if(len(server_queue[ctx.guild.id]) == 0):
                     server_queue[ctx.guild.id].append(player)
                     start_playing(ctx.guild.id, voice_client)
