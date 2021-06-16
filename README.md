@@ -36,12 +36,13 @@ d) ```&resume``` => Resume music<br>
 e) ```&queue``` => Shows the music queue list<br>
 f) ```&skip``` => Skips the music to the next song<br>
 g) ```&stop``` => Stops music and clears queue<br>
+h)```&shuffle```=> Shuffles the queue of music
 
 ## Container Usage
 https://hub.docker.com/repository/docker/raghavtinker/discordmusicbot<br>
 
 ### Features:
-a)Can play playlists from spotify and youtube
-b)Can play single tracks from youtube urls and spotify urls
-d)You can also simply put the song name to play it via youtube
-e)Do note: Playlists in Spotify arent streamed from it. Rather they are used to create a youtube playlist which is streamed
+a)Can play playlists from spotify and youtube<br>
+b)Can play single tracks from youtube urls and spotify urls<br>
+d)You can also simply put the song name to play it via youtube<br>
+e)Do note: Playlists in Spotify arent streamed from it. Rather they are used to create a youtube playlist which is streamed<br>
