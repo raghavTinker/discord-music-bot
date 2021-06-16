@@ -6,6 +6,7 @@ import youtube_dl
 from youtubePlaylist import *
 from youtubesearchpython import VideosSearch
 from spotifyPlaylist import *
+import random
 
 token = ""
 server_queue = dict()
@@ -293,6 +294,8 @@ async def queue(ctx):
             count = count + 1
         else:
             break
+    if((len(server_queue[ctx.guild.id]) - 7) > 0):
+        message = message + "\n" + "{} more songs".format(len(server_queue[ctx.guild.id]) - 7)
     embed = discord.Embed(title="Queue", description="{}".format(message), color=discord.Color.red())
     await ctx.send(embed=embed)
     print(server_queue[ctx.guild.id][0].url)
@@ -312,6 +315,18 @@ async def stop(ctx):
 async def np(ctx):
     embed = discord.Embed(title="Now Playing", description="{}".format(server_queue[ctx.guild.id][0].title), color=discord.Color.red())
     await ctx.send(embed=embed)
+
+#Shuffle
+@bot.command(name="shuffle")
+async def shuffle(ctx):
+    server = ctx.guild.id
+    players = server_queue[server][1:]
+    random.shuffle(players)
+    server_queue[server][1:] = players
+
+    embed = discord.Embed(title="Shuffled", description="Shuffled {} songs".format(len(players)), color=discord.Color.red())
+    await ctx.send(embed=embed)
+
 
 #Token input
 try:
