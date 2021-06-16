@@ -184,6 +184,8 @@ async def play(ctx, *url_link):
                     server_queue[ctx.guild.id] = [player]
                 else:
                     server_queue[ctx.guild.id].append(player)
+            if(voice_client.is_playing() != True):
+                start_playing(ctx.guild.id, voice_client)
 
         elif("spotify" and "track" in url):
             song = getSpotifySong(url)
@@ -201,7 +203,7 @@ async def play(ctx, *url_link):
                     start_playing(ctx.guild.id, voice_client)
                 else:
                     server_queue[ctx.guild.id].append(player)
-            start_playing(ctx.guild.id, voice_client)
+
         #Normal url provided
         else:
             async with ctx.typing():
