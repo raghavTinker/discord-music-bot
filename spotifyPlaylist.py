@@ -30,6 +30,15 @@ def getSpotifySong(url):
 
     return name + ", " + artist
 
+def albumTracks(url):
+    album_id = url.split("/")[4].split("?")[0]
+    album = sp.album(album_id=album_id)
+    songs = []
+    for item in album["tracks"]["items"]:
+        artist = item["artists"][0]["name"]
+        track = item["name"]
+        songs.append(track + ", " + artist)
+    return songs
 try:
     id = str(os.environ['SPOTIFY_ID'])
     secret = str(os.environ['SPOTIFY_SECRET'])
