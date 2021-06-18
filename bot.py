@@ -121,6 +121,7 @@ async def play(ctx, *url_link):
     print(type(server_queue))
     voice_client = ctx.voice_client
     try:
+        #A simple search
         if (".com" or "www" or "https" or "playlist") not in url:
             #this is  not a legit url
             print(url)
@@ -152,7 +153,7 @@ async def play(ctx, *url_link):
                 start_playing(ctx.guild.id, voice_client)
 
 
-        #Playlist
+        #Playlist (youtube)
         elif ("playlist" in url and "spotify" not in url):
             urls_in_playlist = getURL(url_link[0])
             number_of_songs = await getQueuePopulated(ctx.guild.id, urls_in_playlist)
@@ -161,12 +162,20 @@ async def play(ctx, *url_link):
             await ctx.send(embed=embed)
             start_playing(ctx.guild.id, voice_client)
         
-        elif ("spotify" and "playlist" in url):
+        #For playlist and album
+        elif (("spotify" and "playlist") or ("spotify" and "album") in url):
             print("here")
             if ctx.guild.id not in server_queue:
                 server_queue[ctx.guild.id] = []
 
-            songs = getSpotifySongs(url)
+            songs = []
+            
+            if("playlist" in url):
+                print("herE")
+                songs = getSpotifySongs(url)
+            else:
+                print("herE")
+                songs = albumTracks(url)
             embed = discord.Embed(title="Added to queue", description="{} songs added".format(len(songs)), color=discord.Color.red())
             await ctx.send(embed=embed)
             
@@ -187,6 +196,7 @@ async def play(ctx, *url_link):
             if(voice_client.is_playing() != True):
                 start_playing(ctx.guild.id, voice_client)
 
+        #spotify tracks
         elif("spotify" and "track" in url):
             song = getSpotifySong(url)
             vid = VideosSearch(song, limit=2)
