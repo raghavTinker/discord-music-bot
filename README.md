@@ -44,5 +44,6 @@ https://hub.docker.com/repository/docker/raghavtinker/discordmusicbot<br>
 ### Features:
 a)Can play playlists from spotify and youtube<br>
 b)Can play single tracks from youtube urls and spotify urls<br>
+c)Can play spotify albums<br>
 d)You can also simply put the song name to play it via youtube<br>
 e)Do note: Playlists in Spotify arent streamed from it. Rather they are used to create a youtube playlist which is streamed<br>
