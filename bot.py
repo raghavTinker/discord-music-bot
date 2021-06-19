@@ -124,6 +124,7 @@ async def play(ctx, *url_link):
         #A simple search
         if (".com" or "www" or "https" or "playlist") not in url:
             #this is  not a legit url
+            print("search")
             print(url)
             vid = VideosSearch(url, limit=2)
             id = vid.result()["result"][0]["id"]
@@ -155,6 +156,7 @@ async def play(ctx, *url_link):
 
         #Playlist (youtube)
         elif ("playlist" in url and "spotify" not in url):
+            print("playlist")
             urls_in_playlist = getURL(url_link[0])
             number_of_songs = await getQueuePopulated(ctx.guild.id, urls_in_playlist)
             print(number_of_songs)
@@ -163,18 +165,16 @@ async def play(ctx, *url_link):
             start_playing(ctx.guild.id, voice_client)
         
         #For playlist and album
-        elif (("spotify" and "playlist") or ("spotify" and "album") in url):
-            print("here")
+        elif (("spotify" and "playlist" in url) or ("spotify" and "album" in url)):
+            print("spotify playlist/album")
             if ctx.guild.id not in server_queue:
                 server_queue[ctx.guild.id] = []
 
             songs = []
             
             if("playlist" in url):
-                print("herE")
                 songs = getSpotifySongs(url)
             else:
-                print("herE")
                 songs = albumTracks(url)
             embed = discord.Embed(title="Added to queue", description="{} songs added".format(len(songs)), color=discord.Color.red())
             await ctx.send(embed=embed)
@@ -198,6 +198,7 @@ async def play(ctx, *url_link):
 
         #spotify tracks
         elif("spotify" and "track" in url):
+            print("spotify track")
             song = getSpotifySong(url)
             vid = VideosSearch(song, limit=2)
             id = vid.result()["result"][0]["id"]
@@ -220,8 +221,10 @@ async def play(ctx, *url_link):
 
         #Normal url provided
         else:
+            print("youtube url")
+            print(url_link)
             async with ctx.typing():
-                player = await YTDLSource.from_url(url_link[0], loop=bot.loop, stream=True)
+                player = await YTDLSource.from_url(url, loop=bot.loop, stream=True)
             
                 if ctx.guild.id in server_queue:
                     #already using the bot
