@@ -1,0 +1,13 @@
+language: python
+python:
+  3.8.5
+services:
+  - docker
+
+before_install:
+  - echo $DOCKER_PASSWORD | docker login --username $DOCKER_USERNAME --password-stdin
+
+before_script: pip install docker-compose
+
+script:
+  - docker-compose up
