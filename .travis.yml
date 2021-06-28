@@ -10,4 +10,4 @@ services:
 before_script: pip install docker-compose
 
 script:
-  - docker-compose run --rm app sh -c "python bot.py"
+  - docker-compose run --rm discordmusicbot sh -c "python bot.py"
