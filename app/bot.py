@@ -7,6 +7,8 @@ from youtubePlaylist import *
 from youtubesearchpython import VideosSearch
 from spotifyPlaylist import *
 import random
+import requests
+from PIL import Image, ImageDraw, ImageFont
 
 token = ""
 server_queue = dict()
@@ -348,7 +350,33 @@ async def shuffle(ctx):
     else:
         embed = discord.Embed(title="Shuffle error", description="Add more songs", color=discord.Color.red())
         await ctx.send(embed=embed)
+    
+@bot.command(name="bol")
+async def bol(ctx, *message):
+    sans = ImageFont.truetype('SFMonoSemibold.otf', 60)
+    img = Image.new("RGB", (3000, 2000), "black")
+    img.save("message.png")
+    net_message = "%20".join(message)
+    url =  "https://api.github.com/octocat?s=" + net_message
 
+    payload={}
+    headers = {}
+    response = requests.request("GET", url, headers=headers, data=payload)  
+
+    d = ImageDraw.Draw(img)
+    d.text((0, 0), response.text, font=sans, fill=(255, 255, 255))
+    img.save(net_message + ".png")
+    # send file and then delete the file
+    await ctx.send(file=discord.File(net_message + ".png"))
+    os.remove(net_message + ".png")
+
+
+
+@bot.command(name="celebrate")
+async def celebrate(ctx):
+    """send image in the folder"""
+    send_file = discord.File("celebrate.png")
+    await ctx.send(file=send_file)
 
 #Token input
 try:
