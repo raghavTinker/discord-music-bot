@@ -353,6 +353,10 @@ async def shuffle(ctx):
     
 @bot.command(name="bol")
 async def bol(ctx, *message):
+    if(len("%20".join(message)) > 38):
+        embed = discord.Embed(title="Error", description="Itni aukat nahi bhai", color=discord.Color.red())
+        await ctx.send(embed=embed)
+        return
     sans = ImageFont.truetype('SFMonoSemibold.otf', 60)
     img = Image.new("RGB", (3000, 2000), "black")
     img.save("message.png")
