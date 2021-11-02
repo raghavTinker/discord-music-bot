@@ -1,5 +1,5 @@
-# discord-music-bot
-
+# discord-music-bot<br>
+[![Build Status](https://travis-ci.com/raghavTinker/discord-music-bot.svg?branch=main)](https://travis-ci.com/raghavTinker/discord-music-bot)<br>
 This is a discord bot that plays music in your server
 
 a) Install everything mentioned in the requirements.txt<br>
